@@ -1,0 +1,38 @@
+{
+  "name": "solid-konva",
+  "version": "0.1.1",
+  "description": "Solid.js bindings for Konva.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.6",
+    "@unocss/preset-mini": "^0.44.2",
+    "@unocss/vite": "^0.44.2",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.0",
+    "vite-plugin-solid": "^2.3.0"
+  },
+  "dependencies": {
+    "@solid-primitives/resize-observer": "^2.0.2",
+    "@unocss/reset": "^0.44.5",
+    "konva": "^8.3.10",
+    "solid-js": "^1.4.7"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/solid-konva.umd.cjs",
+  "module": "./dist/solid-konva.js",
+  "exports": {
+    ".": {
+      "import": "./dist/solid-konva.js",
+      "require": "./dist/solid-konva.umd.cjs"
+    }
+  },
+  "author": "Lawrence Chen"
+}
