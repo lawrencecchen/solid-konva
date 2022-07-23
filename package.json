@@ -1,6 +1,6 @@
 {
   "name": "solid-konva",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Solid.js bindings for Konva.js",
   "repository": {
     "type": "git",
@@ -40,5 +40,6 @@
       "require": "./dist/solid-konva.umd.cjs"
     }
   },
+  "types": "./dist/index.d.ts",
   "author": "Lawrence Chen"
 }
