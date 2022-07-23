@@ -12,7 +12,7 @@ const App: Component = () => {
   const [x, setX] = createSignal(50);
   const [y, setY] = createSignal(50);
   return (
-    <div class="h-screen">
+    <div>
       <input
         type="range"
         min={0}
@@ -27,7 +27,7 @@ const App: Component = () => {
         value={y()}
         onInput={(e) => setY(e.currentTarget.valueAsNumber)}
       />
-      <Stage class="h-full">
+      <Stage style={{ height: "100vh" }}>
         <Layer>
           <Circle
             {...{
