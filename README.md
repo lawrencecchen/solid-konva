@@ -4,6 +4,8 @@ Solid.js bindings for Konva.js
 
 ## Examples
 
+https://stackblitz.com/edit/vitejs-vite-ey9bl2?file=src%2FApp.tsx
+
 ```tsx
 import { Component, createSignal } from "solid-js";
 import { Circle, Layer, Rect, Stage } from "solid-konva";
