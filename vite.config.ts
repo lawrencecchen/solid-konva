@@ -2,6 +2,9 @@ import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
 import UnocssPlugin from "@unocss/vite";
 import { resolve } from "node:path";
+import typescript from "@rollup/plugin-typescript";
+
+const resolvePath = (str: string) => resolve(__dirname, str);
 
 export default defineConfig({
   plugins: [
@@ -33,12 +36,16 @@ export default defineConfig({
           konva: "Konva",
         },
       },
+      plugins: [
+        typescript({
+          target: "es2020",
+          rootDir: resolve(__dirname, "./lib"),
+          declaration: true,
+          declarationDir: resolve(__dirname, "./dist"),
+          exclude: resolve(__dirname, "./node_modules/**"),
+          allowSyntheticDefaultImports: true,
+        }),
+      ],
     },
   },
-  // lib: {
-  //   entry: resolve(__dirname, 'lib/main.js'),
-  //   name: 'MyLib',
-  //   // the proper extensions will be added
-  //   fileName: 'my-lib'
-  // },
 });

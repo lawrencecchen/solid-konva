@@ -6,7 +6,7 @@ Solid.js bindings for Konva.js
 
 ```tsx
 import { Component, createSignal } from "solid-js";
-import { Circle, Layer, Rect, Stage } from "../lib";
+import { Circle, Layer, Rect, Stage } from "solid-konva";
 
 const App: Component = () => {
   const [x, setX] = createSignal(50);
