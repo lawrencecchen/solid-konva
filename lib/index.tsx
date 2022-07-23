@@ -88,7 +88,6 @@ export function Layer(props: { children?: JSX.Element } & LayerConfig) {
   const stage = useStage();
   createEffect(() => {
     if (stage?.stage()) {
-      console.log("great", stage.stage());
       stage.stage().add(layer);
     }
   });

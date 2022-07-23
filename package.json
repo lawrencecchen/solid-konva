@@ -1,7 +1,11 @@
 {
   "name": "solid-konva",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Solid.js bindings for Konva.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lawrencecchen/solid-konva.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
