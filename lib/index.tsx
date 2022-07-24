@@ -12,6 +12,7 @@ import {
   useContext,
 } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
+import { KonvaEvents, TransformerEvents } from "./types";
 
 function createStage(props: Omit<StageConfig, "container">) {
   const [containerRef, setContainerRef] = createSignal<HTMLDivElement>();
@@ -61,7 +62,6 @@ export function StageContextProvider(props: {
 }
 export function useStage() {
   const stage = useContext(StageContext);
-  // invariant(stage, "useStage() must be used within a StageContextProvider");
   return stage;
 }
 
@@ -71,11 +71,11 @@ export function Stage(
   const stageProps = createStage({ ...props });
 
   return (
-    <StageContextProvider stageProps={stageProps}>
-      <div ref={stageProps.ref} {...props}>
+    <div ref={stageProps.ref} {...props}>
+      <StageContextProvider stageProps={stageProps}>
         {props.children}
-      </div>
-    </StageContextProvider>
+      </StageContextProvider>
+    </div>
   );
 }
 
@@ -97,7 +97,8 @@ export function Layer(props: { children?: JSX.Element } & LayerConfig) {
   });
 
   onCleanup(() => {
-    layer.destroy();
+    console.log("murp");
+    // layer.destroy();
   });
   return (
     <LayerContext.Provider value={{ layer }}>
@@ -105,20 +106,100 @@ export function Layer(props: { children?: JSX.Element } & LayerConfig) {
     </LayerContext.Provider>
   );
 }
-function createEntity(shapeName: keyof typeof Konva) {
-  function Entity(props: ShapeConfig) {
-    const shape = new Konva[shapeName as any](props);
+
+const propsToSkip = {
+  children: true,
+  ref: true,
+  key: true,
+  style: true,
+  forwardedRef: true,
+  unstable_applyCache: true,
+  unstable_applyDrawHitFromCache: true,
+};
+
+function createEntity<T>(shapeName: keyof typeof Konva) {
+  function Entity(props: ShapeConfig & KonvaEvents & T) {
+    let prevProps = {};
+    const [entity, setEntity] = createSignal<Konva.Shape>(null);
     const layer = useLayer();
-    createEffect(() => {
-      layer?.layer?.add(shape);
+
+    onMount(() => {
+      const _entity = new Konva[shapeName as any](props);
+      setEntity(_entity);
+      layer?.layer?.add(_entity);
     });
+
     createEffect(() => {
-      shape.setAttrs(props);
+      if (!entity()) {
+        return;
+      }
+      entity().setAttrs(props);
     });
+
+    createEffect(() => {
+      if (!entity()) {
+        return;
+      }
+      if (prevProps) {
+        for (const key in prevProps) {
+          if (propsToSkip[key]) {
+            continue;
+          }
+          const isEvent = key.slice(0, 2) === "on";
+          const propChanged = prevProps[key] !== props[key];
+
+          // if that is a changed event, we need to remvoe it
+          if (isEvent && propChanged) {
+            let eventName = key.substring(2).toLowerCase();
+            if (eventName.substring(0, 7) === "content") {
+              eventName =
+                "content" +
+                eventName.substring(7, 1).toUpperCase() +
+                eventName.substring(8);
+            }
+            entity().off(eventName, prevProps[key]);
+          }
+          let toRemove = !props.hasOwnProperty(key);
+          if (toRemove) {
+            entity().setAttr(key, undefined);
+          }
+        }
+      }
+
+      const newEvents = {};
+
+      for (const key in props) {
+        if (propsToSkip[key]) {
+          continue;
+        }
+        const isEvent = key.slice(0, 2) === "on";
+        const toAdd = prevProps[key] !== props[key];
+        if (isEvent && toAdd) {
+          let eventName = key.substring(2).toLowerCase();
+          if (eventName.substring(0, 7) === "content") {
+            eventName =
+              "content" +
+              eventName.substring(7, 1).toUpperCase() +
+              eventName.substring(8);
+          }
+          // check that event is not undefined
+          if (props[key]) {
+            newEvents[eventName] = props[key];
+          }
+        }
+      }
+      for (var eventName in newEvents) {
+        // console.log(eventName);
+        entity()?.on(eventName, newEvents[eventName]);
+      }
+      prevProps = props;
+    });
+
     onCleanup(() => {
-      shape.destroy();
+      entity().destroy();
+      console.log("destroyed");
     });
-    return <></>;
+    return <>{/* shape */}</>;
   }
   return Entity;
 }
@@ -140,4 +221,4 @@ export const Path = createEntity("Path");
 export const RegularPolygon = createEntity("RegularPolygon");
 export const Arrow = createEntity("Arrow");
 export const Shape = createEntity("Shape");
-export const Transformer = createEntity("Transformer");
+export const Transformer = createEntity<TransformerEvents>("Transformer");
