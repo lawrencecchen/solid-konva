@@ -98,12 +98,15 @@ export function Layer(props: { children?: JSX.Element } & LayerConfig) {
 
   onCleanup(() => {
     console.log("murp");
-    // layer.destroy();
+    layer.destroy();
   });
   return (
-    <LayerContext.Provider value={{ layer }}>
-      {props.children}
-    </LayerContext.Provider>
+    // idk why, but this div fixes using <Show>
+    <div>
+      <LayerContext.Provider value={{ layer }}>
+        {props.children}
+      </LayerContext.Provider>
+    </div>
   );
 }
 
